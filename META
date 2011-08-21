@@ -1,0 +1,6 @@
+name="rex"
+version="1.0.0"
+description="LWT based simple regular expressions for streams matching"
+archive(byte)="rex.cma"
+archive(native)="rex.cmxa"
+requires = "lwt"

@@ -1,0 +1,46 @@
+Regexp matching on character streams. The main idea is to provide a simple regular expressions library which takes characters not from string but from function "get":
+
+val get: unit -> char Lwt.t
+
+Primitives supported:
+  "c" Matches character "c"
+  "[abc]" Matches any of listed characters
+  "[^abc]" Matches any of NOT listed characters
+  "[\\^\\]]" Matches "^" or "]"
+  "[^\\^\\]]" Matches NOT "^" and NOT "]"
+  "(grp)" Grouping. Matched group can be extracted from result using function "nth".
+  "." Matches any character. Be careful, Rex regexps have no looking-forward algorithms. Regexps such as ".+a" will not ever stop.
+
+Repetition primitives:
+  "c" Matches exactly one character "c"
+  "c?" Matches zero or one "c"
+  "c*" Matches zero or more of "c"'s
+  "c+" Matches one or more of "c"'s
+  "c{2,5}" Matches 2..5 of "c"'s
+
+Usage example:
+
+let regexp = Rex.regexp "GET ([^ ]+) HTTP"
+
+let get =
+   let s = "GET /some/uri HTTP/1.1\n" in
+   let pos = ref 0 in
+   fun () ->
+      let r = s.[pos] in
+      incr pos;
+      Lwt.return r
+
+let match =
+   lwt r = Rex.apply ~get regexp in
+   let result =
+      match r with
+         | None ->
+            "no match"
+         | Some r ->
+            let uri = Rex.nth r 0 in
+            "URI=" ^ uri
+   in
+   Printf.printf "result is: %s\n" result
+
+let _ =
+   Lwt_unix.run match

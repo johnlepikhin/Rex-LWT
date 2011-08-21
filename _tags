@@ -1,0 +1,4 @@
+<*.ml>: syntax_camlp4o, pkg_lwt, pkg_lwt.syntax
+<*.mli>: syntax_camlp4o, pkg_lwt, pkg_lwt.syntax
+<*.cmxa>: pkg_lwt, pkg_lwt.unix
+<*.cma>: pkg_lwt, pkg_lwt.unix
